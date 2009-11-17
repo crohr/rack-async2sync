@@ -3,29 +3,24 @@ module Rack
   # A Rack middleware that transforms async requests (using thin + async_sinatra for example) into synchronous requests
   # Useful for testing with a minimum of changes in your testing environment.
   # e.g.
-  #   require 'sinatra/base'
-  #   require 'sinatra/async'
-  #   require 'rack/async2sync'
-  #   require 'spec'
-  #   require 'rack/test'
-  #   Test::Unit::TestCase.send :include, Rack::Test::Methods
   # 
   #   class MyAsyncRackApp < Sinatra::Base
   #     register Sinatra::Async
   #     aget '/delay/:n' do |n|
+  #       content_type :txt
   #       EM.add_timer(n.to_i) { body { "delayed for #{n} seconds" } }
   #     end
   #   end
-  # 
-  #   def app
-  #     Rack::Async2Sync.new(MyAsyncRackApp)
-  #   end
-  # 
-  #   it "requests the /delay/:n asynchronous method" do
-  #     get '/delay/2'
-  #     # you can use the usual methods of Rack::Test::Methods
-  #     last_response.status.should == 200
-  #     last_response.body.should == "delayed for 2 seconds"
+  #   
+  #   
+  #   class TestRackAsync2Sync < Test::Unit::TestCase
+  #     test "gets the response for an async request" do
+  #       @app = Rack::Async2Sync.new(MyAsyncRackApp)
+  #       get '/delay/1'
+  #       assert last_response.ok?
+  #       assert_equal "delayed for 1 seconds", last_response.body
+  #       assert_equal "text/plain", last_response.headers['Content-Type']
+  #     end
   #   end
   # 
   # Author: Cyril Rohr (cyril.rohr@irisa.fr)
