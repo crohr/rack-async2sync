@@ -5,12 +5,14 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "rack-async2sync"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{A Rack middleware that transforms async requests (using thin + async_sinatra for example) into synchronous requests.}
+    gem.description = %Q{A Rack middleware that transforms async requests (using thin + async_sinatra for example) into synchronous requests. Useful for testing Async Sinatra apps with a minimum of changes in your testing environment.}
     gem.email = "cyril.rohr@gmail.com"
     gem.homepage = "http://github.com/crohr/rack-async2sync"
     gem.authors = ["Cyril Rohr"]
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+    gem.add_development_dependency "contest"
+    gem.add_dependency "eventmachine"
+    gem.add_dependency "async_sinatra"
   end
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"

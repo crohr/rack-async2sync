@@ -1,17 +1,25 @@
 = rack-async2sync
+A Rack middleware that transforms async requests (using thin + async_sinatra for example) into synchronous requests
+Useful for testing with a minimum of changes in your testing environment.
 
-Description goes here.
+  class MyAsyncRackApp < Sinatra::Base
+    register Sinatra::Async
+    aget '/delay/:n' do |n|
+      content_type :txt
+      EM.add_timer(n.to_i) { body { "delayed for #{n} seconds" } }
+    end
+  end
 
-== Note on Patches/Pull Requests
- 
-* Fork the project.
-* Make your feature addition or bug fix.
-* Add tests for it. This is important so I don't break it in a
-  future version unintentionally.
-* Commit, do not mess with rakefile, version, or history.
-  (if you want to have your own version, that is fine but
-   bump version in a commit by itself I can ignore when I pull)
-* Send me a pull request. Bonus points for topic branches.
+  class TestRackAsync2Sync < Test::Unit::TestCase
+    test "gets the response for an async request" do
+      @app = Rack::Async2Sync.new(MyAsyncRackApp)
+      get '/delay/1'
+      assert last_response.ok?
+      assert_equal "delayed for 1 seconds", last_response.body
+      assert_equal "text/plain", last_response.headers['Content-Type']
+    end
+  end
+
 
 == Copyright
 
